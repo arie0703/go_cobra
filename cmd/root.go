@@ -26,8 +26,13 @@ import (
 var cfgFile string
 
 // rootCmd represents the base command when called without any subcommands
+
+var globalFlags struct {
+	language string
+}
+
 var rootCmd = &cobra.Command{
-	Use:   "go_cobra",
+	Use:   "greeting",
 	Short: "A brief description of your application",
 	Long: `A longer description that spans multiple lines and likely contains
 examples and usage of using your application. For example:
@@ -61,6 +66,7 @@ func init() {
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	rootCmd.PersistentFlags().StringVarP(&globalFlags.language, "lang", "l", "en", "Language : en, ja, pt")
 }
 
 // initConfig reads in config file and ENV variables if set.
