@@ -29,6 +29,7 @@ var cfgFile string
 
 var globalFlags struct {
 	language string
+	action string
 }
 
 var rootCmd = &cobra.Command{
@@ -66,7 +67,9 @@ func init() {
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// StringVarPの引数 1: ポインタ, 2: フラグ名, 3: 短縮フラグ名, 4: デフォルト値, 5: 説明
 	rootCmd.PersistentFlags().StringVarP(&globalFlags.language, "lang", "l", "en", "Language : en, ja, pt")
+	rootCmd.PersistentFlags().StringVarP(&globalFlags.action, "action", "a", "help", "action command")
 }
 
 // initConfig reads in config file and ENV variables if set.
