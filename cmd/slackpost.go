@@ -22,6 +22,7 @@ import (
 	"github.com/slack-go/slack"
 	"github.com/spf13/cobra"
 	"time"
+	"strconv"
 )
 
 // slackpostCmd represents the slackpost command
@@ -50,6 +51,8 @@ to quickly create a Cobra application.`,
 			message(args)
 		case "new":
 			new()
+		case "record":
+			getHistory()
 		default:
 			fmt.Printf("メッセージを入力してね！")
 		}
@@ -60,6 +63,7 @@ to quickly create a Cobra application.`,
 func help() {
 	fmt.Println("slackpost -a message ~~~~~:  新規メッセージを投稿")
 	fmt.Println("slackpost -a new:  今日の日付のスレッドを投稿")
+	fmt.Println("slackpost -a record:  本日の投稿記録を取得")
 }
 
 func message(args []string) {
@@ -95,6 +99,31 @@ func new() {
 		panic(err)
 	}
 	fmt.Println("投稿完了！: " + msg)
+}
+
+func getHistory() {
+	tkn := os.Getenv("SLACK_API_TOKEN")
+	channelId:= os.Getenv("SLACK_CHANNEL_ID")
+	c := slack.New(tkn)
+
+	now := time.Now()
+	oldest := strconv.FormatInt(time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.Local).UnixNano(), 10)
+	latest := strconv.FormatInt(time.Date(now.Year(), now.Month(), now.Day(), 23, 59, 59, 999999999, time.Local).UnixNano(), 10)
+	param := slack.GetConversationHistoryParameters{
+		ChannelID:	channelId,
+		Oldest: oldest[:10] + "." + oldest[11:16],
+		Latest: latest[:10] + "." + latest[11:16],
+	}
+
+	history, err := c.GetConversationHistory(&param)
+	if err != nil {
+		fmt.Printf("%s\n", err)
+		return
+	}
+	fmt.Println("〜本日の投稿〜")
+	for i, m := range history.Messages {
+		fmt.Println(i+1, m.Text)
+	}
 }
 
 func init() {
