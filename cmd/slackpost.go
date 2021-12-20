@@ -53,6 +53,8 @@ to quickly create a Cobra application.`,
 			new()
 		case "record":
 			getHistory()
+		case "reply":
+			reply(args)
 		default:
 			fmt.Printf("メッセージを入力してね！")
 		}
@@ -62,6 +64,7 @@ to quickly create a Cobra application.`,
 
 func help() {
 	fmt.Println("slackpost -a message ~~~~~:  新規メッセージを投稿")
+	fmt.Println("slackpost -a replay [thread_timestamp] ~~~~~:  リプライする")
 	fmt.Println("slackpost -a new:  今日の日付のスレッドを投稿")
 	fmt.Println("slackpost -a record:  本日の投稿記録を取得")
 }
@@ -80,6 +83,24 @@ func message(args []string) {
 		}
 
 		fmt.Println("投稿完了！: " + args[0])
+	}
+	
+}
+
+func reply(args []string) {
+	tkn := os.Getenv("SLACK_API_TOKEN")
+	channelName := os.Getenv("SLACK_CHANNEL_NAME")
+	c := slack.New(tkn)
+
+	if len(args) == 0 {
+		fmt.Println("メッセージを入力してね")
+	} else {
+		_, _, err := c.PostMessage(channelName, slack.MsgOptionTS(args[0]),slack.MsgOptionText(args[1], true))
+		if err != nil {
+			panic(err)
+		}
+
+		fmt.Println("投稿完了！: " + args[1])
 	}
 	
 }
@@ -122,7 +143,7 @@ func getHistory() {
 	}
 	fmt.Println("〜本日の投稿〜")
 	for i, m := range history.Messages {
-		fmt.Println(i+1, m.Text)
+		fmt.Println(i+1, m.Text, m.Timestamp)
 	}
 }
 
