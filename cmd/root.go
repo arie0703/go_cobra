@@ -70,6 +70,7 @@ func init() {
 	// StringVarPの引数 1: ポインタ, 2: フラグ名, 3: 短縮フラグ名, 4: デフォルト値, 5: 説明
 	rootCmd.PersistentFlags().StringVarP(&globalFlags.language, "lang", "l", "en", "Language : en, ja, pt")
 	rootCmd.PersistentFlags().StringVarP(&globalFlags.action, "action", "a", "help", "action command")
+	rootCmd.PersistentFlags().StringVarP(&globalFlags.action, "message", "m", "hoge", "message command for SQS")
 }
 
 // initConfig reads in config file and ENV variables if set.
